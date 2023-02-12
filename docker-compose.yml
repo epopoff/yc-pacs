@@ -32,7 +32,7 @@ services:
     networks:
       - web
 
-  # remote PACS
+  # Remote PACS
   remote-pacs:
     build: remote-pacs
     # ports:
@@ -68,7 +68,7 @@ services:
       - traefik.docker.network=web
   
 
-  # cloud write PACS
+  # Cloud Read-Write PACS
   cloud-rw-pacs:
     image: osimis/orthanc:latest
     # ports:
@@ -103,7 +103,7 @@ services:
       - traefik.http.services.pacs.loadbalancer.server.port=8042
       - traefik.docker.network=web
 
-  # cloud read-only PACS
+  # Cloud Read-only PACS
   cloud-ro-pacs:
   build: cloud-ro-pacs
   restart: unless-stopped
