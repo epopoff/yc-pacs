@@ -7,27 +7,27 @@ services:
     container_name: traefik
     restart: always
     security_opt:
-      - no-new-privileges:true
+      no-new-privileges: "true"
     ports:
-      - 80:80
-      - 443:443 
+      - "80:80"
+      - "443:443" 
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/data/traefik.yml:/traefik.yml:ro
-      - ./traefik/ssl:/ssl
-      - ./traefik/data/custom/:/custom/:ro
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/data/traefik.yml:/traefik.yml:ro"
+      - "./traefik/ssl:/ssl"
+      - "./traefik/data/custom/:/custom/:ro"
 
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.traefik.entrypoints=https
-      - traefik.http.routers.traefik.rule=Host(`yc-traefik.yc.cloudtechport.com`) #добавить имя!!!
-      - traefik.http.routers.traefik.tls=true
-      - traefik.http.routers.traefik.tls.certresolver=letsEncrypt
-      - traefik.http.routers.traefik.service=api@internal
-      - traefik.http.services.traefik-traefik.loadbalancer.server.port=888
-      - traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$2y$$05$$oc5dvvCn3KFzk36vyWZf9.CD1eoNAgFcJX3jG.FzNHdvBIeViwEWu
-      - traefik.http.routers.traefik.middlewares=traefik-auth
+      traefik.enable: "true"
+      traefik.http.routers.traefik.entrypoints: "https"
+      traefik.http.routers.traefik.rule: "Host(`yc-traefik.yc.cloudtechport.com`)"
+      traefik.http.routers.traefik.tls: "true"
+      traefik.http.routers.traefik.tls.certresolver: "letsEncrypt"
+      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.services.traefik-traefik.loadbalancer.server.port: "888"
+      traefik.http.middlewares.traefik-auth.basicauth.users: "admin:$$2y$$05$$oc5dvvCn3KFzk36vyWZf9.CD1eoNAgFcJX3jG.FzNHdvBIeViwEWu"
+      traefik.http.routers.traefik.middlewares: "traefik-auth"
 
     networks:
       - web
@@ -59,13 +59,13 @@ services:
     
     # Label for Traefik
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.pacs.rule=Host(`remote-pacs.yc.cloudtechport.com`) #добавить имя!!!
-      - traefik.http.routers.pacs.entrypoints=https
-      - traefik.http.routers.pacs.tls=true
-      - traefik.http.routers.pacs.tls.certresolver=letsEncrypt
-      - traefik.http.services.pacs.loadbalancer.server.port=8042
-      - traefik.docker.network=web
+      traefik.enable: "true"
+      traefik.http.routers.pacs.rule: "Host(`remote-pacs.yc.cloudtechport.com`)"
+      traefik.http.routers.pacs.entrypoints: "https"
+      traefik.http.routers.pacs.tls: "true"
+      traefik.http.routers.pacs.tls.certresolver: "letsEncrypt"
+      traefik.http.services.pacs.loadbalancer.server.port: "8042"
+      traefik.docker.network: "web"
   
 
   # Cloud Read-Write PACS
@@ -95,13 +95,13 @@ services:
 
     # Label for Traefik
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.pacs.rule=Host(`cloud-rw-pacs.yc.cloudtechport.com`) #добавить имя!!!
-      - traefik.http.routers.pacs.entrypoints=https
-      - traefik.http.routers.pacs.tls=true
-      - traefik.http.routers.pacs.tls.certresolver=letsEncrypt
-      - traefik.http.services.pacs.loadbalancer.server.port=8042
-      - traefik.docker.network=web
+      traefik.enable: "true"
+      traefik.http.routers.pacs.rule: "Host(`cloud-rw-pacs.yc.cloudtechport.com`)"
+      traefik.http.routers.pacs.entrypoints: "https"
+      traefik.http.routers.pacs.tls: "true"
+      traefik.http.routers.pacs.tls.certresolver: "letsEncrypt"
+      traefik.http.services.pacs.loadbalancer.server.port: "8042"
+      traefik.docker.network: "web"
 
   # Cloud Read-only PACS
   cloud-ro-pacs:
@@ -128,15 +128,15 @@ services:
       - web
       - internal
 
-        # Label for Traefik
+    # Label for Traefik
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.pacs.rule=Host(`cloud-ro-pacs.yc.cloudtechport.com`) #добавить имя!!!
-      - traefik.http.routers.pacs.entrypoints=https
-      - traefik.http.routers.pacs.tls=true
-      - traefik.http.routers.pacs.tls.certresolver=letsEncrypt
-      - traefik.http.services.pacs.loadbalancer.server.port=8042
-      - traefik.docker.network=web
+      traefik.enable: "true"
+      traefik.http.routers.pacs.rule: "Host(`cloud-ro-pacs.yc.cloudtechport.com`)"
+      traefik.http.routers.pacs.entrypoints: "https"
+      traefik.http.routers.pacs.tls: "true"
+      traefik.http.routers.pacs.tls.certresolver: "letsEncrypt"
+      traefik.http.services.pacs.loadbalancer.server.port: "8042"
+      traefik.docker.network: "web"
 
 volumes:
   storage:
