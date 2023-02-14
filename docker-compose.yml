@@ -7,7 +7,7 @@ services:
     container_name: traefik
     restart: always
     security_opt:
-      no-new-privileges: "true"
+      - no-new-privileges:true
     ports:
       - "80:80"
       - "443:443" 
@@ -35,8 +35,8 @@ services:
   # Remote PACS
   remote-pacs:
     build: remote-pacs
-    # ports:
-    #   - "81:8042"
+    ports:
+      - "8042"
     volumes:
       - "storage:/var/lib/orthanc/db:Z"
     environment:
@@ -71,8 +71,8 @@ services:
   # Cloud Read-Write PACS
   cloud-rw-pacs:
     image: osimis/orthanc:latest
-    # ports:
-    #   - "88:8042"
+    ports:
+      - "8042"
     environment:
       TRANSFERS_PLUGIN_ENABLED: "true"
       ORTHANC__NAME: "cloud-rw-pacs"
@@ -105,20 +105,19 @@ services:
 
   # Cloud Read-only PACS
   cloud-ro-pacs:
-  build: cloud-ro-pacs
-  restart: unless-stopped
-  environment:
-    ORTHANC__NAME: "cloud-ro-pacs"
-    ORTHANC__ORTHANC_EXPLORER_2__IS_DEFAULT_ORTHANC_UI: "true"
-    ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_UPLOAD: "false"
-    ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_DELETE_RESOURCES: "false"
-    ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_SETTINGS: "false"
-    ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_LINK_TO_LEGACY_UI: "false"
-    ORTHANC__SAVE_JOBS: "false"
-    TRACE_ENABLED: "true"
-    ORTHANC__REGISTERED_USERS: |
-      {"cloud-ro": "cloud-ro-192837"}
+    build: cloud-ro-pacs
     restart: unless-stopped
+    environment:
+      ORTHANC__NAME: "cloud-ro-pacs"
+      ORTHANC__ORTHANC_EXPLORER_2__IS_DEFAULT_ORTHANC_UI: "true"
+      ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_UPLOAD: "false"
+      ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_DELETE_RESOURCES: "false"
+      ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_SETTINGS: "false"
+      ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_LINK_TO_LEGACY_UI: "false"
+      ORTHANC__SAVE_JOBS: "false"
+      TRACE_ENABLED: "true"
+      ORTHANC__REGISTERED_USERS: |
+        {"cloud-ro": "cloud-ro-192837"}
     secrets:
       - ORTHANC__AWS_S3_STORAGE__SECRET_KEY
       - ORTHANC__POSTGRESQL__PASSWORD

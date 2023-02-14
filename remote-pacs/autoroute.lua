@@ -4,7 +4,7 @@ function OnStableStudy(studyId, tags, metadata)
     PrintRecursive('Загружено новое исследование: ' .. studyId)
   
     Отправка нового стабильного исследования в облако
-    local body = '{\"Resources\":[{\"Level\":\"Study\",\"ID\":\"' .. studyId .. '\"}],\"Compression\":\"gzip\",\"Peer\":\"cloud-ro-pacs\"}'
+    local body = '{\"Resources\":[{\"Level\":\"Study\",\"ID\":\"' .. studyId .. '\"}],\"Compression\":\"gzip\",\"Peer\":\"cloud-rw-pacs\"}'
     RestApiPost('/transfers/send', body)
     PrintRecursive('Исследование отправлено в облако')
   
