@@ -10,7 +10,7 @@
 - **pacs-db** - база данных в сервисе Managed PostgreSQL для хранения индексов
 - **cloud-packs-bucket** - бакет в Object Storage для хранения DICOM файлов
 - **traefik** - Traefik веб-сервер в роли reverse-proxy, автоматически генерирует SSL сертификаты
-- **remote-pacs** - локальный PACS, автоотправка стабильных исследований в облако. БД файловая.
+- **remote-pacs** - имитация локального PACS, автоотправка стабильных исследований в облако. БД файловая.
 - **cloud-rw-pacs** - облачный PACS, прием исследований с удаленного. Запись в БД (Managed PostgreSQL) и Object Storage.
 - **cloud-ro-pacs** - облачный PACS только для просмотра исследований. Чтение из БД и Object Storage.
 
