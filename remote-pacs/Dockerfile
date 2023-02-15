@@ -1,9 +1,8 @@
 FROM osimis/orthanc:latest
 
-# COPY *.lua /scripts/
-# COPY *.py /scripts/
+RUN pip3 install requests
 
-ENV VERBOSE_STARTUP=true
-ENV VERBOSE_ENABLED=true
+COPY *.py /scripts/
+COPY filter-http.lua /scripts/
 
-# ENV ORTHANC__LUA_SCRIPTS='["/scripts/autoroute.lua"]'
+ENV ORTHANC__LUA_SCRIPTS='["/scripts/filter-http.lua"]'

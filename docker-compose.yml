@@ -15,6 +15,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./traefik/data/traefik.yml:/traefik.yml:ro"
+      - "./traefik/data/secret-traefik.txt:/secret-traefik.txt:ro"
       - "./traefik/ssl:/ssl"
       - "./traefik/data/custom/:/custom/:ro"
 
@@ -26,7 +27,7 @@ services:
       traefik.http.routers.traefik.tls.certresolver: "letsEncrypt"
       traefik.http.routers.traefik.service: "api@internal"
       traefik.http.services.traefik-traefik.loadbalancer.server.port: "888"
-      traefik.http.middlewares.traefik-auth.basicauth.users: "admin:$$2y$$05$$oc5dvvCn3KFzk36vyWZf9.CD1eoNAgFcJX3jG.FzNHdvBIeViwEWu"
+      traefik.http.middlewares.traefik-auth.basicauth.usersfile: "secret-traefik.txt"
       traefik.http.routers.traefik.middlewares: "traefik-auth"
 
     networks:
@@ -35,22 +36,25 @@ services:
   # Remote PACS
   remote-pacs:
     build: remote-pacs
-    ports:
-      - "8042"
+    # ports:
+    #   - "8042"
     volumes:
       - "storage:/var/lib/orthanc/db:Z"
     environment:
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
       TRANSFERS_PLUGIN_ENABLED: "true"
+      ORTHANC__STABLE_AGE: "30"
       ORTHANC__NAME: "remote-pacs"
-      # ORTHANC__PYTHON_SCRIPT: "/scripts/autoroute.py"
+      PYTHON_PLUGIN_ENABLED: "true"
+      ORTHANC__PYTHON_SCRIPT: "/scripts/autoroute.py"
       ORTHANC__PYTHON_VERBOSE: "true"
+      ORTHANC__ORTHANC_EXPLORER_2__IS_DEFAULT_ORTHANC_UI: "true"
       ORTHANC__REGISTERED_USERS: |
-        { "remote" : "remote-102938" }
+        { "admin" : "remote-102938" }
       ORTHANC__ORTHANC_PEERS: |
         {
-            "cloud-rw-pacs": ["http://cloud-rw-pacs:8042/", "cloud-rw", "cloud-rw-102938"]
+            "cloud-rw-pacs": ["http://cloud-rw-pacs:8042/", "admin", "cloud-rw-102938"]
         }
     restart: unless-stopped
     networks:
@@ -60,28 +64,28 @@ services:
     # Label for Traefik
     labels:
       traefik.enable: "true"
-      traefik.http.routers.pacs.rule: "Host(`remote-pacs.yc.cloudtechport.com`)"
-      traefik.http.routers.pacs.entrypoints: "https"
-      traefik.http.routers.pacs.tls: "true"
-      traefik.http.routers.pacs.tls.certresolver: "letsEncrypt"
-      traefik.http.services.pacs.loadbalancer.server.port: "8042"
+      traefik.http.routers.remote-pacs.rule: "Host(`remote-pacs.yc.cloudtechport.com`)"
+      traefik.http.routers.remote-pacs.entrypoints: "https"
+      traefik.http.routers.remote-pacs.tls: "true"
+      traefik.http.routers.remote-pacs.tls.certresolver: "letsEncrypt"
+      traefik.http.services.remote-pacs.loadbalancer.server.port: "8042"
       traefik.docker.network: "web"
   
 
   # Cloud Read-Write PACS
   cloud-rw-pacs:
     image: osimis/orthanc:latest
-    ports:
-      - "8042"
+    # ports:
+    #   - "8042"
     environment:
       TRANSFERS_PLUGIN_ENABLED: "true"
       ORTHANC__NAME: "cloud-rw-pacs"
-      ORTHANC__ORTHANC_EXPLORER_2__IS_DEFAULT_ORTHANC_UI: "true"
+      OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
       ORTHANC__REGISTERED_USERS: |
-        { "cloud-rw" : "cloud-rw-102938" }
+        { "admin" : "cloud-rw-102938" }
       ORTHANC__ORTHANC_PEERS: |
         {
-            "remote": ["http://remote-pacs:8042/", "remote", "remote_password_102938"]
+            "remote": ["http://remote-pacs:8042/", "admin", "remote_password_102938"]
         }
     restart: unless-stopped
     secrets:
@@ -96,11 +100,11 @@ services:
     # Label for Traefik
     labels:
       traefik.enable: "true"
-      traefik.http.routers.pacs.rule: "Host(`cloud-rw-pacs.yc.cloudtechport.com`)"
-      traefik.http.routers.pacs.entrypoints: "https"
-      traefik.http.routers.pacs.tls: "true"
-      traefik.http.routers.pacs.tls.certresolver: "letsEncrypt"
-      traefik.http.services.pacs.loadbalancer.server.port: "8042"
+      traefik.http.routers.cloud-rw-pacs.rule: "Host(`cloud-rw-pacs.yc.cloudtechport.com`)"
+      traefik.http.routers.cloud-rw-pacs.entrypoints: "https"
+      traefik.http.routers.cloud-rw-pacs.tls: "true"
+      traefik.http.routers.cloud-rw-pacs.tls.certresolver: "letsEncrypt"
+      traefik.http.services.cloud-rw-pacs.loadbalancer.server.port: "8042"
       traefik.docker.network: "web"
 
   # Cloud Read-only PACS
@@ -109,7 +113,6 @@ services:
     restart: unless-stopped
     environment:
       ORTHANC__NAME: "cloud-ro-pacs"
-      ORTHANC__ORTHANC_EXPLORER_2__IS_DEFAULT_ORTHANC_UI: "true"
       ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_UPLOAD: "false"
       ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_DELETE_RESOURCES: "false"
       ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_SETTINGS: "false"
@@ -117,7 +120,7 @@ services:
       ORTHANC__SAVE_JOBS: "false"
       TRACE_ENABLED: "true"
       ORTHANC__REGISTERED_USERS: |
-        {"cloud-ro": "cloud-ro-192837"}
+        {"demo": "cloud-ro-192837"}
     secrets:
       - ORTHANC__AWS_S3_STORAGE__SECRET_KEY
       - ORTHANC__POSTGRESQL__PASSWORD
@@ -130,11 +133,11 @@ services:
     # Label for Traefik
     labels:
       traefik.enable: "true"
-      traefik.http.routers.pacs.rule: "Host(`cloud-ro-pacs.yc.cloudtechport.com`)"
-      traefik.http.routers.pacs.entrypoints: "https"
-      traefik.http.routers.pacs.tls: "true"
-      traefik.http.routers.pacs.tls.certresolver: "letsEncrypt"
-      traefik.http.services.pacs.loadbalancer.server.port: "8042"
+      traefik.http.routers.cloud-ro-pacs.rule: "Host(`cloud-ro-pacs.yc.cloudtechport.com`)"
+      traefik.http.routers.cloud-ro-pacs.entrypoints: "https"
+      traefik.http.routers.cloud-ro-pacs.tls: "true"
+      traefik.http.routers.cloud-ro-pacs.tls.certresolver: "letsEncrypt"
+      traefik.http.services.cloud-ro-pacs.loadbalancer.server.port: "8042"
       traefik.docker.network: "web"
 
 volumes:
