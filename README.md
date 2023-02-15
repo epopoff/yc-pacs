@@ -5,7 +5,7 @@
 
 ## Компоненты
 
-<тут разместить схему стенда>
+![yc-pacs](https://user-images.githubusercontent.com/22369924/219082813-3c4eba42-5839-487c-abec-5c868c63051c.png)
 
 - **traefik** - Traefik веб-сервер в роли reverse-proxy, автоматически генерирует SSL сертификаты
 - **remote-pacs** - локальный PACS, автоотправка стабильных исследований в облако
