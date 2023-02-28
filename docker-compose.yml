@@ -45,7 +45,7 @@ services:
       ORTHANC__STABLE_AGE: "30"
       ORTHANC__NAME: "remote-pacs"
       PYTHON_PLUGIN_ENABLED: "true"
-      ORTHANC__PYTHON_SCRIPT: "/scripts/autoroute.py"
+      # ORTHANC__PYTHON_SCRIPT: "/scripts/autoroute.py"
       ORTHANC__PYTHON_VERBOSE: "true"
       ORTHANC__ORTHANC_EXPLORER_2__IS_DEFAULT_ORTHANC_UI: "true"
       ORTHANC__REGISTERED_USERS: |
@@ -81,7 +81,7 @@ services:
         { "admin" : "cloud-rw-102938" }
       ORTHANC__ORTHANC_PEERS: |
         {
-            "remote": ["http://remote-pacs:8042/", "admin", "remote_password_102938"]
+            "remote-pacs": ["http://remote-pacs:8042/", "admin", "remote-102938"]
         }
     restart: unless-stopped
     secrets:
