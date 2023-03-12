@@ -77,23 +77,42 @@ def handler(event, context):
     # Choosing stable studies
     for change in res.json()['Changes']:
         if change['ChangeType']=='StableStudy':
-            study = change['ID']
-            # Get information about some study
-            r = requests.get(
-                f"{os.environ['REMOTE_PACS_ENDPOINT']}/studies/{study}",
+            studyID = change['ID']
+            # Get study information
+            study = requests.get(
+                f"{os.environ['REMOTE_PACS_ENDPOINT']}/studies/{studyID}",
+                params = {
+                    'requestedTags': 'ModalitiesInStudy;BodyPartExamined'
+                },
                 auth=remote_pacs_auth
             )
-            # Create task
-            get_docapi_table('new_studies').put_item(
-                Item={
-                    'id': study,
-                    'uploaded': False
-                })
-            print(f'Successfully added to YDB: {study}')
+
+            # Get study statistics
+            statistics = requests.get(
+                f"{os.environ['REMOTE_PACS_ENDPOINT']}/studies/{studyID}/statistics",
+                auth=remote_pacs_auth
+            )
+
+            # Record of study information to DB
+            get_docapi_table('studies').put_item(Item={
+                    'StudyInstanceUID': study.json()['MainDicomTags']['StudyInstanceUID'],
+                    'PatientID': study.json()['PatientMainDicomTags']['PatientID'],
+                    'Status': 'new',
+                    'ModalitiesInStudy': study.json()['RequestedTags']['ModalitiesInStudy'],
+                    'BodyPartExamined': study.json()['RequestedTags']['BodyPartExamined'],
+                    'RemoteInfo': {
+                        'StudyID': study.json()['ID'],
+                        'CountInstances': statistics.json()['CountInstances'],
+                        'CountSeries': statistics.json()['CountSeries'],
+                        'DiskSizeMB': statistics.json()['DiskSizeMB']
+                        },
+                    })
+            
+            print(f'Successfully added to YDB: {studyID}')
 
             get_ymq_queue().send_message(
                 MessageBody=json.dumps({
-                    'id': study
+                    'id': studyID
                 })
             )
     

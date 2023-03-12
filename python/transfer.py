@@ -43,26 +43,17 @@ def get_docapi_table(table_name):
 def handler(event, context):
     # Credentials for API PACS
     cloud_rw_pacs_auth = HTTPBasicAuth(os.environ['CLOUD_RW_PACS_USER'], os.environ['CLOUD_RW_PACS_PASSWORD'])
-    stdout_fileno = sys.stdout
 
     for message in event['messages']:
         body_json = json.loads(message['details']['message']['body'])
-        study_id = body_json['id']
-        stdout_fileno.write(study_id +'\n')
+        studyID = body_json['id']
         res = requests.post(
             f"{os.environ['CLOUD_RW_PACS_ENDPOINT']}/transfers/pull",
             data=json.dumps({
-                    "Resources": [{"Level": "Study", "ID": study_id}],
+                    "Resources": [{"Level": "Study", "ID": studyID}],
                     "Compression" : "gzip",
                     "Peer" : "remote-pacs"
                 }),
         auth=cloud_rw_pacs_auth)
-
-        # get_docapi_table('new_studies').update_item(
-        #     Key={'id': study_id},
-        #     AttributeUpdates={
-        #         'uploaded': {'Value': True}
-        #     }
-        # )
 
     return 'OK'
