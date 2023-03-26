@@ -1,5 +1,6 @@
 ## whatsnew.py
 
+![yc-pacs-whatsnew py](https://user-images.githubusercontent.com/22369924/227764427-1f141e20-da1d-4ab0-9a6b-0a674e49475e.png)
 
 
 Функция запускается по расписанию и проверяет наличие новых исследований в remote-pacs.
@@ -18,6 +19,7 @@
 
 ## transfer.py
 
+![yc-pacs-transfer py](https://user-images.githubusercontent.com/22369924/227764451-ca28b0ba-da34-4c22-bd30-5f229f1769f1.png)
 
 
 Функция запускается по триггеру и сообщает cloud-rw-pacs, что нужно забрать исследования с remote-pacs.
