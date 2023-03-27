@@ -99,7 +99,7 @@ def handler(event, context):
                     'PatientID': study.json()['PatientMainDicomTags']['PatientID'],
                     'Status': 'new',
                     'ModalitiesInStudy': study.json()['RequestedTags']['ModalitiesInStudy'],
-                    'BodyPartExamined': study.json()['RequestedTags']['BodyPartExamined'],
+                    # 'BodyPartExamined': study.json()['RequestedTags']['BodyPartExamined'],
                     'RemoteInfo': {
                         'StudyID': study.json()['ID'],
                         'CountInstances': statistics.json()['CountInstances'],
