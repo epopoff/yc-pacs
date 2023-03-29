@@ -5,7 +5,8 @@
 
 ## Компоненты
 
-![yc-pacs-architecture](https://user-images.githubusercontent.com/22369924/227762026-fb50d351-a331-47c7-9ce2-5a07682aa396.png)
+![yc-pacs-architecture](https://user-images.githubusercontent.com/22369924/228566568-50c6af55-8cbc-4af3-a56e-5603f0042216.png)
+
 
 **Compute Cloud VM**
 - **traefik** - Traefik веб-сервер в роли reverse-proxy, автоматически генерирует SSL сертификаты
@@ -23,6 +24,7 @@
 **Cloud Functions:**
 - **whatsnew.py** - функция проверки новых исследований на remote-pacs
 - **transfer.py** - функция перемещения новых исследований с remote-pacs на cloud-pacs
+- **clear-remote.py** -  функция очистки remote-pacs после успешного перемещения в cloud-pacs
 
 **YDB:**
 - **studies** - таблица в БД для хранения информации об исследованиях
