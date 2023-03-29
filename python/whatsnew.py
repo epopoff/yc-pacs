@@ -104,7 +104,8 @@ def handler(event, context):
                         'StudyID': study.json()['ID'],
                         'CountInstances': statistics.json()['CountInstances'],
                         'CountSeries': statistics.json()['CountSeries'],
-                        'DiskSizeMB': statistics.json()['DiskSizeMB']
+                        'DiskSizeMB': statistics.json()['DiskSizeMB'],
+                        'DiskSize': statistics.json()['DiskSize']
                         },
                     })
             
